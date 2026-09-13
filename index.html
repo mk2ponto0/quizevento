@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0B">
+<title>SEVET · IA aplicada aos negócios</title>
+<meta name="description" content="Marketing pode ser um ralo de dinheiro. Descubra onde o seu está vazando.">
+<meta property="og:title" content="SEVET · IA aplicada aos negócios">
+<meta property="og:description" content="Marketing pode ser um ralo de dinheiro. Descubra onde o seu está vazando.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SEVET · publicado em quizevento.vercel.app (futuro: talk.sevet.com)
+   Ao trocar de domínio, REGERAR o QR da tela #qr para a nova URL.
+   CONFIRMAR: --laranja foi medido por aproximação do logo.
+   Trocar pelo hex oficial da marca antes de publicar.
+   ============================================================ */
+:root{
+  --preto:#0A0A0B;
+  --preto2:#101012;
+  --grafite:#18181C;
+  --grafite2:#22222A;
+  --linha:#2A2A33;
+  --branco:#F7F7F8;
+  --cinza:#A0A0A8;
+  --cinza2:#6B6B75;
+  --laranja:#E9552B;      /* CONFIRMAR */
+  --laranja-claro:#FF7B4F;
+  --laranja-deep:#7E2B11;
+  --ok:#3DD68C;
+  --ease:cubic-bezier(.23,1,.32,1);
+  --pad:clamp(1.25rem,5vw,4.5rem);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--preto)}
+body{
+  font-family:Poppins,"Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--preto);color:var(--branco);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+/* precisa do !important: #nav button define display:grid e venceria o [hidden] do navegador */
+[hidden]{display:none!important}
+
+/* ---------- PALCO ---------- */
+#palco{position:fixed;inset:0;overflow:hidden}
+.sl{
+  position:absolute;inset:0;
+  display:none;
+  padding:calc(env(safe-area-inset-top) + 3.6rem) var(--pad) calc(env(safe-area-inset-bottom) + 4.2rem);
+  overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+/* centralização por margem automática: quando o conteúdo é maior que a tela,
+   as margens auto viram 0 e nada é cortado no topo (o justify-content:center corta). */
+.sl.on{display:flex;flex-direction:column;justify-content:flex-start;gap:clamp(.9rem,2.4vw,1.6rem)}
+.sl.on>*:first-child{margin-top:auto}
+.sl.on>*:last-child{margin-bottom:auto}
+.sl.on>*{animation:sobe .45s var(--ease) both}
+.sl.on>*:nth-child(2){animation-delay:.06s}
+.sl.on>*:nth-child(3){animation-delay:.12s}
+.sl.on>*:nth-child(4){animation-delay:.18s}
+.sl.on>*:nth-child(5){animation-delay:.24s}
+.sl.on>*:nth-child(6){animation-delay:.3s}
+@keyframes sobe{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* brilho de fundo */
+.glow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.glow::before{
+  content:"";position:absolute;width:120vmax;height:120vmax;border-radius:50%;
+  right:-55vmax;top:-62vmax;filter:blur(80px);opacity:.55;
+  background:radial-gradient(circle,rgba(233,85,43,.22) 0%,rgba(126,43,17,.10) 42%,transparent 68%);
+}
+.glow::after{
+  content:"";position:absolute;width:110vmax;height:110vmax;border-radius:50%;
+  left:-58vmax;bottom:-64vmax;filter:blur(90px);opacity:.42;
+  background:radial-gradient(circle,rgba(233,85,43,.14) 0%,transparent 66%);
+}
+#palco{z-index:1}
+
+/* ---------- TIPOGRAFIA ---------- */
+.kicker{
+  font-size:clamp(.62rem,2.4vw,.8rem);font-weight:700;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--laranja);
+}
+h1{
+  font-size:clamp(2.1rem,9.5vw,5.2rem);font-weight:800;line-height:.98;
+  letter-spacing:-.03em;text-wrap:balance;
+}
+h2{
+  font-size:clamp(1.72rem,7.4vw,4rem);font-weight:700;line-height:1.04;
+  letter-spacing:-.025em;text-wrap:balance;
+}
+h3{
+  font-size:clamp(1.2rem,5.2vw,2.1rem);font-weight:700;line-height:1.15;
+  letter-spacing:-.015em;
+}
+.lede{
+  font-size:clamp(1rem,4.2vw,1.5rem);line-height:1.42;color:var(--cinza);
+  max-width:46ch;font-weight:400;
+}
+.lede b,p b{color:var(--branco);font-weight:600}
+.lar{color:var(--laranja)}
+.risco{text-decoration:line-through;text-decoration-color:var(--laranja);
+  text-decoration-thickness:.14em;color:var(--cinza2)}
+
+/* número gigante */
+.big{
+  font-size:clamp(4.6rem,26vw,15rem);font-weight:800;line-height:.82;
+  letter-spacing:-.05em;
+  background:linear-gradient(160deg,var(--branco) 18%,var(--laranja) 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.big span{font-size:.42em;letter-spacing:-.02em}
+
+/* fonte da estatística */
+.fonte{
+  font-size:clamp(.66rem,2.6vw,.82rem);color:var(--cinza2);line-height:1.4;
+  border-left:2px solid var(--linha);padding-left:.7rem;max-width:52ch;
+}
+
+/* listas */
+ul.bul{list-style:none;display:grid;gap:clamp(.6rem,2vw,.95rem);max-width:52ch}
+ul.bul li{
+  position:relative;padding-left:1.7rem;
+  font-size:clamp(.98rem,4vw,1.35rem);line-height:1.36;
+}
+ul.bul li::before{
+  content:"";position:absolute;left:0;top:.55em;
+  width:.6rem;height:.6rem;background:var(--laranja);
+  border-radius:1px;transform:rotate(45deg);
+}
+ol.num{list-style:none;counter-reset:n;display:grid;gap:clamp(.7rem,2.2vw,1.1rem);max-width:52ch}
+ol.num li{counter-increment:n;position:relative;padding-left:2.5rem;
+  font-size:clamp(.95rem,3.8vw,1.28rem);line-height:1.36}
+ol.num li::before{
+  content:counter(n);position:absolute;left:0;top:0;
+  width:1.7rem;height:1.7rem;border-radius:50%;
+  background:var(--laranja);color:#fff;font-weight:700;font-size:.82rem;
+  display:grid;place-items:center;
+}
+
+/* cartões */
+.cards{display:grid;gap:.7rem;grid-template-columns:1fr}
+@media (min-width:760px){.cards{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
+.card{
+  border:1px solid var(--linha);border-radius:16px;background:var(--preto2);
+  padding:clamp(.9rem,3vw,1.3rem);
+}
+.card h4{font-size:clamp(.95rem,3.6vw,1.2rem);font-weight:700;margin-bottom:.35rem}
+.card p{font-size:clamp(.85rem,3.2vw,1rem);line-height:1.4;color:var(--cinza)}
+.card.lar-b{border-color:var(--laranja-deep);background:linear-gradient(155deg,#1A0B05,#101012)}
+
+/* peça do encanamento */
+.peca{display:grid;gap:.9rem}
+.peca .par{border:1px solid var(--linha);border-radius:16px;overflow:hidden}
+.peca .par>div{padding:clamp(.85rem,3vw,1.2rem)}
+.peca .vaza{background:#170A06;border-bottom:1px solid var(--linha)}
+.peca .tapa{background:var(--preto2)}
+.peca h4{font-size:clamp(.62rem,2.4vw,.76rem);font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;margin-bottom:.45rem}
+.peca .vaza h4{color:var(--laranja)}
+.peca .tapa h4{color:var(--cinza2)}
+.peca p{font-size:clamp(.92rem,3.6vw,1.15rem);line-height:1.38}
+
+/* prompt copiável */
+.prompt{
+  border:1.5px dashed var(--laranja);border-radius:14px;background:#150A06;
+  padding:clamp(.85rem,3vw,1.2rem);
+}
+.prompt code{
+  display:block;font-family:ui-monospace,"Cascadia Mono",Consolas,monospace;
+  font-size:clamp(.82rem,3.3vw,1.02rem);line-height:1.45;color:var(--branco);
+  white-space:pre-wrap;word-break:break-word;
+}
+.copiar{
+  margin-top:.7rem;background:var(--laranja);border:0;border-radius:99px;
+  padding:.6rem 1.1rem;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;
+  min-height:44px;
+}
+.copiar.feito{background:var(--ok);color:#04140C}
+
+/* ---------- CALCULADORA ---------- */
+.calc{display:grid;gap:.75rem}
+.calc .campos{display:grid;gap:.65rem;grid-template-columns:1fr 1fr}
+.calc .f{display:grid;gap:.25rem}
+.calc label{font-size:clamp(.66rem,2.6vw,.78rem);font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--cinza)}
+.calc input{
+  background:var(--grafite);border:1px solid var(--linha);border-radius:12px;
+  padding:.7rem .8rem;font-size:1.05rem;font-weight:600;width:100%;
+  min-height:48px;
+}
+.calc input:focus{outline:2px solid var(--laranja);outline-offset:1px;border-color:transparent}
+.calc .saida{
+  border:1.5px solid var(--laranja);border-radius:18px;
+  background:linear-gradient(150deg,#1C0C06,#101012);
+  padding:clamp(1rem,3.4vw,1.5rem);text-align:center;
+}
+.calc .saida .rot{font-size:clamp(.66rem,2.6vw,.8rem);font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--laranja);margin-bottom:.35rem}
+.calc .saida .val{
+  font-size:clamp(2.1rem,11vw,4.4rem);font-weight:800;letter-spacing:-.035em;
+  line-height:1;font-variant-numeric:tabular-nums;
+}
+.calc .saida .sub{font-size:clamp(.78rem,3vw,.95rem);color:var(--cinza);margin-top:.5rem;line-height:1.4}
+
+/* ---------- FORM ---------- */
+.form{display:grid;gap:.75rem;max-width:40rem}
+.form .f{display:grid;gap:.3rem}
+.form label{font-size:clamp(.68rem,2.7vw,.8rem);font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--cinza)}
+.form input[type=text],.form input[type=email],.form input[type=tel],.form textarea,.form select{
+  background:var(--grafite);border:1px solid var(--linha);border-radius:12px;
+  padding:.75rem .85rem;font-size:1rem;width:100%;min-height:48px;
+}
+.form textarea{min-height:88px;resize:vertical}
+.form input:focus,.form textarea:focus,.form select:focus{
+  outline:2px solid var(--laranja);outline-offset:1px;border-color:transparent}
+.notas{display:flex;gap:.35rem;flex-wrap:wrap}
+.notas input{position:absolute;opacity:0;width:0;height:0}
+.notas label{
+  border:1px solid var(--linha);border-radius:10px;background:var(--grafite);
+  min-width:2.6rem;min-height:44px;display:grid;place-items:center;
+  font-size:1rem;font-weight:700;letter-spacing:0;text-transform:none;color:var(--branco);
+  cursor:pointer;flex:1 1 2.6rem;
+}
+.notas input:checked+label{background:var(--laranja);border-color:var(--laranja);color:#fff}
+.notas input:focus-visible+label{outline:2px solid var(--branco);outline-offset:2px}
+.consent{display:flex;gap:.6rem;align-items:flex-start;font-size:.86rem;color:var(--cinza);line-height:1.4}
+.consent input{width:1.35rem;height:1.35rem;accent-color:var(--laranja);flex:none;margin-top:.1rem}
+.enviar{
+  background:var(--laranja);border:0;border-radius:99px;color:#fff;
+  font-size:1.05rem;font-weight:700;padding:1rem 1.4rem;min-height:52px;cursor:pointer;
+  transition:transform .18s var(--ease),filter .18s var(--ease);
+}
+.enviar:hover{filter:brightness(1.08)}
+.enviar:active{transform:translateY(1px)}
+.enviar[disabled]{opacity:.5;cursor:not-allowed}
+.erroMsg{color:var(--laranja-claro);font-size:.88rem;display:none}
+.erroMsg.on{display:block}
+
+/* botão grande genérico */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  background:var(--laranja);color:#fff;border:0;border-radius:99px;
+  padding:1rem 1.6rem;font-size:1.05rem;font-weight:700;min-height:52px;
+  text-decoration:none;cursor:pointer;
+}
+.btn.ghost{background:transparent;border:1.5px solid var(--linha);color:var(--branco)}
+
+/* ---------- HUD ---------- */
+#barra{
+  position:fixed;top:0;left:0;right:0;height:3px;background:#1A1A20;z-index:20;
+}
+#barra i{display:block;height:100%;width:0;background:var(--laranja);transition:width .35s var(--ease)}
+#hud{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  padding:calc(env(safe-area-inset-top) + .55rem) var(--pad) .9rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  pointer-events:none;
+  background:linear-gradient(to bottom,var(--preto) 18%,rgba(10,10,11,.82) 60%,rgba(10,10,11,0));
+}
+#marca{display:flex;align-items:center;gap:.45rem;font-weight:800;letter-spacing:.14em;
+  font-size:clamp(.72rem,3vw,.9rem)}
+#marca .m{width:.85rem;height:.85rem;background:var(--laranja);
+  clip-path:polygon(38% 0,100% 0,62% 46%,100% 46%,20% 100%,46% 54%,0 54%);flex:none}
+#conta{font-size:clamp(.7rem,2.9vw,.85rem);font-weight:700;color:var(--cinza2);
+  font-variant-numeric:tabular-nums}
+#conta b{color:var(--laranja)}
+
+#nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  padding:.5rem var(--pad) calc(env(safe-area-inset-bottom) + .6rem);
+  display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+  background:linear-gradient(to top,rgba(10,10,11,.96),rgba(10,10,11,0));
+}
+#nav button{
+  background:rgba(34,34,42,.9);border:1px solid var(--linha);border-radius:99px;
+  min-width:44px;min-height:44px;display:grid;place-items:center;cursor:pointer;
+  font-size:1.1rem;font-weight:700;color:var(--branco);
+}
+#nav button:active{transform:scale(.94)}
+#dica{font-size:clamp(.62rem,2.5vw,.74rem);color:var(--cinza2);text-align:center;flex:1;
+  letter-spacing:.06em;text-transform:uppercase}
+
+.zona{position:fixed;top:3.4rem;bottom:3.6rem;width:22%;z-index:15;background:none;border:0;cursor:pointer}
+.zona.e{left:0}
+.zona.d{right:0;width:30%}
+
+/* ---------- QR ---------- */
+#qrTela{
+  position:fixed;inset:0;z-index:60;display:none;
+  background:var(--preto);
+  flex-direction:column;align-items:center;justify-content:center;gap:clamp(1rem,3vw,2rem);
+  padding:var(--pad);text-align:center;
+}
+#qrTela.on{display:flex}
+#qrTela .cx{background:#fff;padding:clamp(.8rem,2vw,1.4rem);border-radius:18px;
+  width:min(64vh,70vw);aspect-ratio:1}
+#qrTela svg{width:100%;height:100%;display:block}
+#qrTela .url{font-size:clamp(1.3rem,5vw,3rem);font-weight:800;letter-spacing:-.01em}
+#qrTela .ins{font-size:clamp(.9rem,2.6vw,1.4rem);color:var(--cinza);max-width:34ch}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+<div id="barra"><i></i></div>
+
+<div id="hud">
+  <div id="marca"><span class="m"></span>SEVET</div>
+  <div id="conta"><b>1</b>/24</div>
+</div>
+
+<main id="palco">
+
+<!-- 1 ................................................ -->
+<section class="sl">
+  <p class="kicker">Sevet · Agência criativa de mídia</p>
+  <h1>Marketing pode ser um <span class="lar">ralo de dinheiro</span>.</h1>
+  <p class="lede">IA aplicada aos negócios. Nos próximos 30 minutos você vai descobrir por onde o seu dinheiro está vazando, e quanto isso custa por ano.</p>
+  <div class="card">
+    <h4>Como acompanhar</h4>
+    <p>Arraste para o lado ou toque na borda direita da tela para avançar. O número no topo é o slide. Quando eu disser "vai pro 9", é esse número.</p>
+  </div>
+</section>
+
+<!-- 2 ................................................ -->
+<section class="sl">
+  <p class="kicker">Building a StoryBrand · Donald Miller</p>
+  <h2>"Most companies waste enormous amounts of money on marketing"</h2>
+  <p class="lede">A maior parte das empresas desperdiça uma quantidade enorme de dinheiro em marketing. E o pior: quando o relatório chega, o dono não descobre o que deu errado. Ele começa a duvidar do próprio produto.</p>
+  <p class="fonte">Donald Miller, <i>Building a StoryBrand</i>, HarperCollins Leadership, 2017.</p>
+</section>
+
+<!-- 3 ................................................ -->
+<section class="sl">
+  <p class="kicker">O tamanho do ralo</p>
+  <p class="big">60<span>%</span></p>
+  <h3>É quanto do investimento digital global é desperdiçado. Todo ano.</h3>
+  <p class="lede">Não é opinião de palestrante. É auditoria de quem administra bilhões em mídia.</p>
+  <p class="fonte">Proxima (2015): até 60% do gasto digital global é desperdiçado, entre atividade web fraudulenta e anúncios que nenhum humano viu.</p>
+</section>
+
+<!-- 4 ................................................ -->
+<section class="sl">
+  <h2>Mas o ralo <span class="lar">não está</span> onde você pensa.</h2>
+  <ul class="bul">
+    <li>Você acha que está na <span class="risco">mídia caríssima</span></li>
+    <li>Você acha que está na <span class="risco">agência ruim</span></li>
+    <li>Você acha que está no <span class="risco">algoritmo que mudou</span></li>
+  </ul>
+  <p class="lede">O ralo está no <b>metro e meio depois do clique</b>. E é exatamente aí que quase ninguém olha.</p>
+</section>
+
+<!-- 5 ................................................ -->
+<section class="sl">
+  <p class="kicker">O que você tem na mão</p>
+  <h2>"A Inteligência Artificial é como se você tivesse acesso às melhores consultorias, mentorias e às informações nas mentes dos <span class="lar">melhores CEOs</span>."</h2>
+  <p class="lede"><b>Leonardo Chucrute</b></p>
+</section>
+
+<!-- 6 ................................................ -->
+<section class="sl">
+  <h2>Como <span class="lar">funciona</span>?</h2>
+  <ul class="bul">
+    <li>Reconhecimento de padrões, resolução de problemas, aprendizado, compreensão de linguagem natural e tomada de decisões</li>
+    <li>Utilizam algoritmos e modelos matemáticos complexos para processar grandes quantidades de dados e aprender com eles</li>
+    <li>Existem diferentes abordagens e técnicas dentro do campo da inteligência artificial, incluindo aprendizado de máquina, redes neurais artificiais, lógica fuzzy e algoritmos genéticos</li>
+  </ul>
+</section>
+
+<!-- 7 ................................................ -->
+<section class="sl">
+  <p class="kicker">Antes de falar do ralo</p>
+  <h2>Três coisas que a IA já faz pelo seu negócio <span class="lar">hoje</span>.</h2>
+  <div class="cards">
+    <div class="card"><h4>Responder</h4><p>Rascunho de resposta para as cinco perguntas que se repetem todo dia no WhatsApp, no seu tom de voz.</p></div>
+    <div class="card"><h4>Produzir</h4><p>Conteúdo que responde dúvida real de quem compra, em volume, sem depender de inspiração.</p></div>
+    <div class="card"><h4>Enxergar</h4><p>Você joga a sua planilha e pergunta em português: quem não compra há 90 dias, qual motivo de perda mais aparece.</p></div>
+  </div>
+  <p class="lede">Custa por volta de <b>zero</b> para começar. Camada grátis resolve as três.</p>
+</section>
+
+<!-- 6 ................................................ -->
+<section class="sl">
+  <p class="kicker">Use hoje · copie e cole</p>
+  <h3>O prompt que vale a palestra inteira</h3>
+  <div class="prompt">
+    <code id="p1">Meu negócio: [descreva em 3 linhas o que você vende, para quem e em que cidade]. Liste as 5 perguntas que meu cliente faz antes de comprar e, para cada uma, um post curto que responda. Português do Brasil, tom direto, sem clichê.</code>
+    <button class="copiar" data-alvo="p1">Copiar prompt</button>
+  </div>
+  <p class="lede">Quanto melhor você descrever o negócio, melhor sai. <b>Essa diferença é o ponto.</b> A ferramenta é a mesma para todos. O que muda é o que você coloca dentro.</p>
+</section>
+
+<!-- 7 ................................................ -->
+<section class="sl">
+  <p class="kicker">A virada</p>
+  <h2>A IA derrubou o custo de <span class="lar">gerar</span> demanda.</h2>
+  <p class="lede">Produzir ficou quase grátis. Aparecer ficou barato. Então o que separa quem ganha dinheiro de quem só gasta não é mais a produção.</p>
+  <div class="card lar-b">
+    <h4>É ter para onde a demanda ir.</h4>
+    <p>IA sem marca, sem site, sem formulário e sem CRM é torneira aberta em balde furado. Você paga pela água e ela vaza.</p>
+  </div>
+</section>
+
+<!-- 8 ................................................ -->
+<section class="sl">
+  <p class="kicker">O dado que dói</p>
+  <p class="big">23<span>%</span></p>
+  <h3>Das empresas auditadas <span class="lar">nunca responderam</span> o lead. Nem uma vez.</h3>
+  <p class="lede">Não demoraram. Não responderam. O dinheiro da mídia foi gasto, o cliente levantou a mão, e ninguém apareceu.</p>
+  <p class="fonte">Harvard Business Review (2011), "The Short Life of Online Sales Leads": auditoria de 2.241 empresas americanas.</p>
+</section>
+
+<!-- 9 ................................................ -->
+<section class="sl">
+  <p class="kicker">E quem respondeu</p>
+  <p class="big">42<span>h</span></p>
+  <h3>Foi o tempo médio de resposta entre as que responderam.</h3>
+  <p class="lede">Quase dois dias. Nesse intervalo seu cliente já pesquisou, já falou com outros dois e já decidiu.</p>
+  <p class="fonte">Harvard Business Review (2011). No mesmo estudo, apenas 37% responderam em menos de 1 hora.</p>
+</section>
+
+<!-- 10 ............................................... -->
+<section class="sl">
+  <p class="kicker">O preço da lentidão</p>
+  <p class="big">21<span>x</span></p>
+  <h3>Menos chance de qualificar o lead se você responde em 30 minutos em vez de 5.</h3>
+  <p class="lede">Trinta minutos. Não trinta horas. <b>O tempo de tomar um café.</b></p>
+  <p class="fonte">Lead Response Management Study (InsideSales / MIT, 2007): 3 anos de dados, 6 empresas, mais de 15.000 leads e 100.000 tentativas de contato.</p>
+</section>
+
+<!-- 11 ............................................... -->
+<section class="sl">
+  <p class="kicker">Agora no seu bolso</p>
+  <h3>Quanto o seu ralo consome por ano</h3>
+  <div class="calc">
+    <div class="campos">
+      <div class="f"><label for="cL">Leads por mês</label><input id="cL" type="number" inputmode="numeric" min="0" value="50"></div>
+      <div class="f"><label for="cT">Ticket médio (R$)</label><input id="cT" type="number" inputmode="numeric" min="0" value="3000"></div>
+      <div class="f"><label for="cC">Você fecha (%)</label><input id="cC" type="number" inputmode="numeric" min="0" max="100" value="15"></div>
+      <div class="f"><label for="cR">Respondidos em 1h (%)</label><input id="cR" type="number" inputmode="numeric" min="0" max="100" value="37"></div>
+    </div>
+    <div class="saida">
+      <div class="rot">Receita que escorre por ano</div>
+      <div class="val" id="cOut">R$ 0</div>
+      <div class="sub">Conta: dos leads que você <b>não</b> responde em 1 hora, assumimos recuperar apenas <b>25%</b> deles, convertendo na sua própria taxa de fechamento. É a hipótese mais conservadora possível.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ............................................... -->
+<section class="sl">
+  <h2>Isso não é problema de mídia. É problema de <span class="lar">encanamento</span>.</h2>
+  <p class="lede">Colocar mais verba em cima de um sistema furado só faz a água vazar mais rápido. Cinco peças decidem se o dinheiro fica ou escorre.</p>
+  <ol class="num">
+    <li><b>Branding</b>: por que confiar em você</li>
+    <li><b>Site</b>: onde ele te procura antes de responder</li>
+    <li><b>Landing page</b>: onde a demanda vira contato</li>
+    <li><b>Formulário</b>: onde o contato vira informação útil</li>
+    <li><b>CRM</b>: onde a informação vira venda, e não esquecimento</li>
+  </ol>
+</section>
+
+<!-- 13 ............................................... -->
+<section class="sl">
+  <p class="kicker">Peça 1 de 5</p>
+  <h2>Branding</h2>
+  <div class="peca">
+    <div class="par">
+      <div class="vaza"><h4>Sem isso, vaza assim</h4><p>A IA fez todo mundo produzir em escala. Quando tudo parece de qualquer um, o cliente escolhe pelo <b>preço</b>, porque não sobrou outro critério.</p></div>
+      <div class="tapa"><h4>Com a peça no lugar</h4><p>Marca é o atalho de confiança. É o que faz o seu orçamento ser comparado com valor em vez de centavo.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 ............................................... -->
+<section class="sl">
+  <p class="kicker">Peça 2 de 5</p>
+  <h2>Site</h2>
+  <div class="peca">
+    <div class="par">
+      <div class="vaza"><h4>Sem isso, vaza assim</h4><p>O cliente te pesquisa <b>antes</b> de responder sua mensagem. Se não te acha, ou acha algo de 2019, ele não te responde e você nem sabe que existiu.</p></div>
+      <div class="tapa"><h4>Com a peça no lugar</h4><p>Site é a prova de que a empresa existe, entrega e é grande o suficiente para o tamanho do problema dele.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 ............................................... -->
+<section class="sl">
+  <p class="kicker">Peça 3 de 5</p>
+  <h2>Landing page</h2>
+  <div class="peca">
+    <div class="par">
+      <div class="vaza"><h4>Sem isso, vaza assim</h4><p>Tráfego que cai na home se perde. Cinco caminhos, nenhuma decisão. Você pagou pelo clique e entregou um labirinto.</p></div>
+      <div class="tapa"><h4>Com a peça no lugar</h4><p>Uma página, uma promessa, uma ação. É onde a demanda que a IA gerou finalmente vira contato.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 ............................................... -->
+<section class="sl">
+  <p class="kicker">Peça 4 de 5</p>
+  <h2>Formulário</h2>
+  <div class="peca">
+    <div class="par">
+      <div class="vaza"><h4>Sem isso, vaza assim</h4><p>Lead chega como "oi, quanto custa". Sua equipe gasta três dias de WhatsApp para descobrir algo que quatro campos resolveriam.</p></div>
+      <div class="tapa"><h4>Com a peça no lugar</h4><p>O lead chega qualificado e com contexto. E aí a IA pode redigir a resposta certa em segundos, porque ela sabe do que se trata.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 ............................................... -->
+<section class="sl">
+  <p class="kicker">Peça 5 de 5 · o maior ralo</p>
+  <h2>CRM</h2>
+  <div class="peca">
+    <div class="par">
+      <div class="vaza"><h4>Sem isso, vaza assim</h4><p>É aqui que moram os <b>23% que nunca responderam</b> e as <b>42 horas</b> de atraso. Sem CRM ninguém sabe quem entrou, quem respondeu, quem sumiu.</p></div>
+      <div class="tapa"><h4>Com a peça no lugar</h4><p>Todo lead tem dono, prazo e próximo passo. O follow-up acontece sem depender de alguém lembrar. É a peça que devolve o número que você calculou no slide 13.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 ............................................... -->
+<section class="sl">
+  <p class="kicker">O sistema</p>
+  <h2>Cinco peças, <span class="lar">um</span> encanamento.</h2>
+  <p class="lede">Peça solta não resolve. Site bonito sem CRM continua perdendo lead. CRM sem formulário recebe lixo. Marca sem landing page não converte atenção em contato.</p>
+  <div class="card lar-b">
+    <h4>A frase para levar embora</h4>
+    <p>A IA é a parte que ficou barata. O encanamento é a parte que decide quem ganha dinheiro.</p>
+  </div>
+</section>
+
+<!-- 19 ............................................... -->
+<section class="sl">
+  <p class="kicker">Onde a IA entra em cada peça</p>
+  <h3>Não é enfeite. É o que torna o sistema barato de operar.</h3>
+  <ul class="bul">
+    <li><b>Branding</b>: variação infinita de peça sem perder a identidade</li>
+    <li><b>Site</b>: conteúdo que responde a dúvida real, atualizado sem agência</li>
+    <li><b>Landing page</b>: teste de oferta e de título em dias, não em meses</li>
+    <li><b>Formulário</b>: qualificação e resumo do lead antes de alguém abrir o WhatsApp</li>
+    <li><b>CRM</b>: follow-up escrito, motivo de perda classificado, relatório em português</li>
+  </ul>
+</section>
+
+<!-- 20 ............................................... -->
+<section class="sl">
+  <p class="kicker">Quem faz</p>
+  <h2>SEVET</h2>
+  <p class="lede">Agência criativa de mídia. A gente monta o encanamento inteiro: <b>branding, site, landing page, formulários e CRM</b>, com IA operando dentro de cada peça.</p>
+  <div class="cards">
+    <div class="card"><h4>Não vendemos ferramenta</h4><p>Ferramenta muda de nome a cada seis meses. Processo sobrevive à troca.</p></div>
+    <div class="card"><h4>Não vendemos mídia</h4><p>A gente conserta o que faz a mídia valer a pena. Se você precisar de verba, indicamos quem faz e trabalhamos junto.</p></div>
+  </div>
+</section>
+
+<!-- 22 ............................................... -->
+<section class="sl">
+  <p class="kicker">Próximo passo</p>
+  <h2>Responda 6 perguntas. Leve um <span class="lar">assistente de IA</span> pronto.</h2>
+  <p class="lede">É um assistente já configurado no <b>Gemini</b>, pronto para trabalhar no seu negócio. Você recebe o link <b>na hora</b>, nesta mesma tela, assim que enviar. Basta ter uma conta Google.</p>
+  <button class="btn" data-ir-id="telaQuiz">Quero responder agora</button>
+  <p class="fonte">Leva menos de dois minutos. A avaliação me diz o que melhorar na palestra, e o assistente vai para você na mesma tela.</p>
+</section>
+
+<!-- QUIZ ............................................. -->
+<section class="sl" id="telaQuiz">
+  <p class="kicker">Avaliação da palestra</p>
+  <h3>Seis perguntas e o assistente é seu</h3>
+  <form class="form" id="quiz" novalidate>
+    <div class="f">
+      <label for="qNome">Seu nome *</label>
+      <input id="qNome" name="nome" type="text" autocomplete="name" required>
+    </div>
+    <div class="f">
+      <label for="qEmpresa">Empresa e o que ela vende *</label>
+      <input id="qEmpresa" name="empresa" type="text" autocomplete="organization" required>
+    </div>
+    <div class="f">
+      <label for="qZap">WhatsApp com DDD *</label>
+      <input id="qZap" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required>
+    </div>
+    <div class="f">
+      <label for="qMail">E-mail *</label>
+      <input id="qMail" name="email" type="email" inputmode="email" autocomplete="email" required>
+    </div>
+    <div class="f">
+      <label>Nota para a palestra, de 0 a 10 *</label>
+      <div class="notas" id="qNotas"></div>
+    </div>
+    <div class="f">
+      <label for="qVaza">Qual das cinco peças está mais furada no seu negócio? *</label>
+      <!-- Os valores precisam ser IDÊNTICOS às opções do Google Forms.
+           Valor diferente faz o Forms descartar a resposta inteira em silêncio. -->
+      <select id="qVaza" name="vazamento" required>
+        <option value="">Escolha uma</option>
+        <option value="BRANDING">Branding</option>
+        <option value="SITE">Site</option>
+        <option value="LANDING PAGE">Landing page</option>
+        <option value="FORMULÁRIOS INTERATIVOS">Formulários interativos</option>
+        <option value="CRM">CRM</option>
+        <option value="NÃO SEI DIZER">Não sei dizer</option>
+      </select>
+    </div>
+    <label class="consent">
+      <input type="checkbox" id="qLgpd" required>
+      <span>Autorizo a SEVET a entrar em contato comigo por WhatsApp ou e-mail sobre os serviços apresentados. Posso pedir a exclusão dos meus dados a qualquer momento.</span>
+    </label>
+    <p class="erroMsg" id="qErro"></p>
+    <button class="enviar" type="submit" id="qBtn">Enviar e receber o assistente</button>
+  </form>
+</section>
+
+<!-- 24 · OBRIGADO .................................... -->
+<section class="sl">
+  <p class="kicker">Pronto</p>
+  <h1>Seu assistente <span class="lar">está liberado</span>.</h1>
+  <p class="lede">Obrigado pela avaliação. Abra o link, salve nos favoritos e comece pelo prompt do slide 8. <b>Abre dentro do Gemini</b>, e a conta Google que você já tem dá conta.</p>
+  <a class="btn" id="linkAssistente" href="#" target="_blank" rel="noopener">Abrir meu assistente de IA</a>
+  <a class="btn ghost" id="linkZap" href="#" target="_blank" rel="noopener">Falar com a SEVET no WhatsApp</a>
+  <p class="lede" style="font-size:clamp(.82rem,3.1vw,1rem)">Se em três dias você não tiver ouvido nada da gente, toque no botão de WhatsApp acima. Ele já vai com os seus dados escritos.</p>
+  <p class="fonte">Fontes citadas: Harvard Business Review (2011), "The Short Life of Online Sales Leads"; Lead Response Management Study (InsideSales / MIT, 2007); Proxima (2015); Donald Miller, <i>Building a StoryBrand</i> (2017).</p>
+</section>
+
+</main>
+
+<button class="zona e" id="zE" aria-label="Slide anterior"></button>
+<button class="zona d" id="zD" aria-label="Próximo slide"></button>
+
+<nav id="nav">
+  <button id="bPrev" aria-label="Anterior">‹</button>
+  <span id="dica">arraste ou toque na direita</span>
+  <button id="bNext" aria-label="Próximo">›</button>
+</nav>
+
+<!-- ================= TELA DO QR (para o palestrante) ================= -->
+<div id="qrTela">
+  <p class="kicker">Aponte a câmera do celular</p>
+  <div class="cx">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h35v35H0z"/><path stroke="#000000" d="M1 1.5h7m3 0h1m2 0h2m1 0h3m1 0h2m1 0h2m1 0h7M1 2.5h1m5 0h1m2 0h1m1 0h2m2 0h1m1 0h1m1 0h2m1 0h2m2 0h1m5 0h1M1 3.5h1m1 0h3m1 0h1m3 0h3m1 0h1m4 0h1m3 0h1m2 0h1m1 0h3m1 0h1M1 4.5h1m1 0h3m1 0h1m2 0h1m3 0h5m1 0h1m2 0h3m1 0h1m1 0h3m1 0h1M1 5.5h1m1 0h3m1 0h1m1 0h2m2 0h2m3 0h2m4 0h2m1 0h1m1 0h3m1 0h1M1 6.5h1m5 0h1m2 0h1m2 0h1m1 0h1m1 0h3m4 0h1m2 0h1m5 0h1M1 7.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 8.5h1m1 0h1m2 0h1m1 0h1m2 0h3m1 0h1m1 0h1M3 9.5h2m2 0h4m1 0h5m2 0h1m2 0h1m1 0h1m1 0h2m1 0h1M2 10.5h5m3 0h2m1 0h3m1 0h1m3 0h2m1 0h1m1 0h2m2 0h1m1 0h2M2 11.5h1m1 0h1m2 0h1m2 0h4m1 0h3m3 0h1m2 0h2m5 0h3M1 12.5h3m1 0h2m1 0h1m3 0h1m4 0h1m6 0h1m1 0h4M2 13.5h2m3 0h1m4 0h1m1 0h4m1 0h4m2 0h2m1 0h1M2 14.5h2m1 0h2m1 0h1m5 0h2m1 0h1m4 0h2m1 0h1m4 0h1M1 15.5h1m1 0h1m2 0h2m1 0h2m5 0h2m3 0h2m6 0h2M4 16.5h1m1 0h1m2 0h4m1 0h1m1 0h1m1 0h1m1 0h1m1 0h3m1 0h1m1 0h1m1 0h3M4 17.5h1m1 0h3m2 0h4m2 0h1m4 0h1m1 0h4m1 0h1m1 0h2M1 18.5h3m2 0h1m3 0h1m4 0h1m2 0h1m1 0h5m2 0h3m1 0h3M3 19.5h1m3 0h2m1 0h1m3 0h1m1 0h5m2 0h1m2 0h4m1 0h2M2 20.5h5m1 0h1m1 0h2m2 0h3m11 0h1M1 21.5h3m1 0h4m4 0h1m4 0h1m1 0h1m1 0h1m2 0h1m1 0h2m1 0h2m1 0h1M1 22.5h1m6 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h2m2 0h1m1 0h1m4 0h2m1 0h1M3 23.5h1m1 0h4m2 0h1m2 0h1m4 0h2m2 0h3m1 0h2m3 0h2M2 24.5h1m1 0h1m1 0h1m3 0h2m4 0h2m5 0h1m2 0h1m3 0h1m1 0h1M1 25.5h1m1 0h2m1 0h4m2 0h1m1 0h4m2 0h2m3 0h5m2 0h1M9 26.5h1m1 0h3m2 0h1m1 0h2m2 0h1m1 0h2m3 0h1m1 0h2M1 27.5h7m1 0h1m1 0h1m1 0h1m2 0h1m1 0h1m2 0h2m1 0h2m1 0h1m1 0h1m1 0h1M1 28.5h1m5 0h1m3 0h2m1 0h1m5 0h1m3 0h2m3 0h5M1 29.5h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h1m1 0h1m2 0h1m1 0h7m1 0h2M1 30.5h1m1 0h3m1 0h1m1 0h5m2 0h8m1 0h1m2 0h1M1 31.5h1m1 0h3m1 0h1m1 0h3m2 0h1m4 0h2m4 0h3m3 0h1M1 32.5h1m5 0h1m7 0h5m1 0h2m2 0h3m5 0h1M1 33.5h7m3 0h1m2 0h1m5 0h2m2 0h1m3 0h4"/></svg>
+  </div>
+  <p class="url">quizevento.vercel.app</p>
+  <p class="ins">Abra no seu celular e acompanhe a palestra na sua mão. Tecla Q volta para a apresentação.</p>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURAR ANTES DE PUBLICAR
+   ============================================================ */
+var CONFIG = {
+  // URL de envio do Google Forms. Pegue a URL de edição do formulário,
+  // troque /viewform por /formResponse.
+  formAction: "https://docs.google.com/forms/d/e/1FAIpQLSdbytcdF6GyAERwelXrDfn562IH9y7y5TT7jmiA5fs9GuJpQw/formResponse",
+
+  // IDs dos campos do Google Forms (entry.XXXXXXXX).
+  // Como achar: abra o formulário publicado, botão direito, "Exibir código-fonte",
+  // e procure por "entry." na ordem das perguntas.
+  campos: {
+    nome:      "entry.797798966",    // Seu Nome
+    empresa:   "entry.610805866",    // Empresa, o que ela vende?
+    whatsapp:  "entry.1294044242",   // Whatsapp
+    email:     "entry.1410206694",   // Melhor e-mail
+    nota:      "entry.203505944",    // Nota geral da palestra
+    vazamento: "entry.1458756219"    // Qual seu ralo hoje? (múltipla escolha)
+  },
+
+  // Link do assistente entregue na tela de obrigado.
+  assistente: "https://gemini.google.com/gem/1X189tvle8ZCItcSqcOwHaqCUWTj6ZKyM?usp=sharing",
+
+  // WhatsApp da SEVET (formato internacional, só dígitos).
+  whatsapp: "5521982187838",
+  whatsappTexto: "Vi a palestra IA aplicada aos negocios e quero falar sobre o encanamento do meu negocio."
+};
+
+(function(){
+  "use strict";
+  var slides = [].slice.call(document.querySelectorAll(".sl"));
+  var total = slides.length;
+  var i = 0;
+
+  /* A última tela (o assistente) fica trancada até o formulário ser enviado.
+     Sem isso a pessoa passa direto pelo quiz e leva a recompensa sem deixar lead. */
+  var liberado = false;
+  var idxQuiz = slides.indexOf(document.getElementById("telaQuiz"));
+  var idxObrigado = total - 1;
+  var elConta = document.querySelector("#conta");
+  var elBarra = document.querySelector("#barra i");
+  var elDica = document.querySelector("#dica");
+  var elNext = document.querySelector("#bNext");
+  var elZonaD = document.querySelector("#zD");
+  var qrTela = document.querySelector("#qrTela");
+
+  /* ---------- navegação ---------- */
+  function pinta(){
+    slides.forEach(function(s,n){ s.classList.toggle("on", n===i); });
+    elConta.innerHTML = "<b>"+(i+1)+"</b>/"+total;
+    elBarra.style.width = (total>1 ? (i/(total-1))*100 : 100) + "%";
+    slides[i].scrollTop = 0;
+    var trancado = (i === idxQuiz && !liberado);
+    elDica.textContent = trancado
+      ? "envie o formulário para liberar"
+      : (i===0 ? "arraste ou toque na direita" : (i+1)+" de "+total);
+    // some com o convite para avançar enquanto a tranca estiver ativa
+    elNext.hidden = trancado;
+    elZonaD.hidden = trancado;
+    if(location.hash !== "#"+(i+1)) history.replaceState(null,"","#"+(i+1));
+  }
+  function vai(n){
+    if(n<0) n = 0;
+    if(n>total-1) n = total-1;
+    if(n === idxObrigado && !liberado){ barra(); return; }
+    if(n===i) return;
+    i = n; pinta();
+  }
+
+  /* Tentou pular o formulário: leva para o quiz e explica. */
+  function barra(){
+    if(i !== idxQuiz){ i = idxQuiz; pinta(); }
+    var erroEl = document.getElementById("qErro");
+    erroEl.textContent = "Envie o formulário para liberar o assistente.";
+    erroEl.classList.add("on");
+    var campo = document.getElementById("qNome");
+    if(campo && !campo.value) campo.focus({preventScroll:true});
+  }
+  function prox(){ vai(i+1); }
+  function ant(){ vai(i-1); }
+
+  /* hash inicial: #7 abre o slide 7, #qr abre a tela do QR */
+  (function inicial(){
+    var h = (location.hash||"").replace("#","").toLowerCase();
+    if(h === "qr"){ qrTela.classList.add("on"); }
+    var n = parseInt(h,10);
+    if(!isNaN(n) && n>=1 && n<=total) i = n-1;
+    // #25 na barra de endereço não pode furar a tranca
+    if(i === idxObrigado && !liberado) i = idxQuiz;
+    pinta();
+  })();
+
+  document.querySelector("#bNext").addEventListener("click", prox);
+  document.querySelector("#bPrev").addEventListener("click", ant);
+  document.querySelector("#zD").addEventListener("click", prox);
+  document.querySelector("#zE").addEventListener("click", ant);
+
+  document.addEventListener("keydown", function(e){
+    var k = e.key.toLowerCase();
+    if(k === "q"){ qrTela.classList.toggle("on"); return; }
+    if(qrTela.classList.contains("on")){ if(k==="escape") qrTela.classList.remove("on"); return; }
+    if(/^(input|textarea|select)$/i.test(document.activeElement.tagName)) return;
+    if(k==="arrowright"||k==="arrowdown"||k===" "||k==="pagedown"||k==="enter"){ e.preventDefault(); prox(); }
+    else if(k==="arrowleft"||k==="arrowup"||k==="pageup"){ e.preventDefault(); ant(); }
+    else if(k==="home"){ e.preventDefault(); vai(0); }
+    else if(k==="end"){ e.preventDefault(); vai(total-1); }
+    else if(k==="f"){
+      e.preventDefault();
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+  qrTela.addEventListener("click", function(){ qrTela.classList.remove("on"); });
+
+  /* swipe */
+  var x0=null, y0=null;
+  document.addEventListener("touchstart", function(e){
+    if(e.touches.length!==1) return;
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+  }, {passive:true});
+  document.addEventListener("touchend", function(e){
+    if(x0===null) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - x0, dy = t.clientY - y0;
+    x0 = null;
+    if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)*1.6){ dx < 0 ? prox() : ant(); }
+  }, {passive:true});
+
+  /* botões "ir para" (por id do slide, para não quebrar se um slide sair) */
+  [].forEach.call(document.querySelectorAll("[data-ir-id]"), function(b){
+    b.addEventListener("click", function(){
+      var alvo = document.getElementById(b.dataset.irId);
+      var n = slides.indexOf(alvo);
+      if(n >= 0) vai(n);
+    });
+  });
+
+  /* ---------- copiar prompt ---------- */
+  [].forEach.call(document.querySelectorAll(".copiar"), function(b){
+    b.addEventListener("click", function(){
+      var txt = document.getElementById(b.dataset.alvo).textContent;
+      var ok = function(){
+        var antes = b.textContent;
+        b.textContent = "Copiado"; b.classList.add("feito");
+        setTimeout(function(){ b.textContent = antes; b.classList.remove("feito"); }, 1800);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(ok, function(){ fallback(txt, ok); });
+      } else { fallback(txt, ok); }
+    });
+  });
+  function fallback(txt, ok){
+    var ta = document.createElement("textarea");
+    ta.value = txt; ta.setAttribute("readonly","");
+    ta.style.position="fixed"; ta.style.left="-9999px";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); ok(); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  /* ---------- calculadora ---------- */
+  var RECUPERACAO = 0.25; // hipótese conservadora, também escrita na tela
+  var brl = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});
+  var ids = ["cL","cT","cC","cR"];
+  function calcula(){
+    var L = num("cL"), T = num("cT"), C = num("cC")/100, R = num("cR")/100;
+    if(R>1) R=1; if(C>1) C=1;
+    var frios = L * (1 - R);                 // leads/mês sem resposta em 1h
+    var perda = frios * RECUPERACAO * C * T * 12;
+    document.getElementById("cOut").textContent = brl.format(isFinite(perda) ? perda : 0);
+  }
+  function num(id){
+    var v = parseFloat(document.getElementById(id).value);
+    return isFinite(v) && v > 0 ? v : 0;
+  }
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener("input", calcula);
+    el.addEventListener("change", calcula);
+  });
+  calcula();
+
+  /* ---------- notas 0 a 10 ---------- */
+  var wrapNotas = document.getElementById("qNotas");
+  for(var n=0;n<=10;n++){
+    var id = "nota"+n;
+    var inp = document.createElement("input");
+    inp.type="radio"; inp.name="nota"; inp.value=String(n); inp.id=id;
+    if(n===10) inp.required = true;
+    var lab = document.createElement("label");
+    lab.setAttribute("for",id); lab.textContent = String(n);
+    wrapNotas.appendChild(inp); wrapNotas.appendChild(lab);
+  }
+
+  /* ---------- links finais ---------- */
+  var elAss = document.getElementById("linkAssistente");
+  var elZap = document.getElementById("linkZap");
+  zapGenerico();
+
+  function zapGenerico(){
+    elZap.href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(CONFIG.whatsappTexto);
+  }
+  // Rede de segurança: se o POST pro Forms falhar em silêncio, o participante
+  // ainda chega até a SEVET com nome e empresa dentro da própria mensagem.
+  function zapComDados(d){
+    var msg = "Ola! Sou " + d.nome + ", da " + d.empresa +
+      ". Preenchi a avaliacao da palestra IA aplicada aos negocios. " +
+      "Minha peca mais furada e: " + d.vazamento + ".";
+    elZap.href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
+  }
+
+  /* ---------- envio do quiz ---------- */
+  var form = document.getElementById("quiz");
+  var btn = document.getElementById("qBtn");
+  var erro = document.getElementById("qErro");
+  var TELA_OBRIGADO = total - 1;
+
+  function mostraErro(msg){
+    erro.textContent = msg; erro.classList.add("on");
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    erro.classList.remove("on");
+
+    var dados = {
+      nome:       val("qNome"),
+      empresa:    val("qEmpresa"),
+      whatsapp:   val("qZap"),
+      email:      val("qMail"),
+      nota:       (form.querySelector("input[name=nota]:checked")||{}).value || "",
+      vazamento:  val("qVaza")
+    };
+
+    if(!dados.nome || !dados.empresa || !dados.whatsapp || !dados.email){
+      return mostraErro("Preencha nome, empresa, WhatsApp e e-mail.");
+    }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(dados.email)){
+      return mostraErro("Confira o e-mail, parece incompleto.");
+    }
+    if(dados.whatsapp.replace(/\D/g,"").length < 10){
+      return mostraErro("Confira o WhatsApp, precisa do DDD.");
+    }
+    if(!dados.nota){ return mostraErro("Escolha uma nota de 0 a 10."); }
+    if(!dados.vazamento){ return mostraErro("Escolha qual peça está mais furada."); }
+    if(!document.getElementById("qLgpd").checked){
+      return mostraErro("Marque a autorização de contato para continuar.");
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Enviando...";
+    zapComDados(dados);
+
+    var body = new URLSearchParams();
+    Object.keys(CONFIG.campos).forEach(function(k){
+      if(dados[k] !== undefined) body.append(CONFIG.campos[k], dados[k]);
+    });
+
+    // Guarda local: se a rede falhar, o lead não se perde.
+    try{
+      var fila = JSON.parse(localStorage.getItem("sevet_leads")||"[]");
+      fila.push({t:new Date().toISOString(), d:dados});
+      localStorage.setItem("sevet_leads", JSON.stringify(fila));
+    }catch(err){}
+
+    var configurado = CONFIG.formAction.indexOf("COLE_O_ID_AQUI") === -1;
+    if(!configurado){
+      console.warn("[SEVET] CONFIG.formAction não configurado. O lead ficou salvo em localStorage['sevet_leads'].");
+      return entrega();
+    }
+
+    // A escapatória vem ANTES do fetch, de propósito. Se o fetch lançar de forma
+    // síncrona (CSP, extensão, origem opaca), o resto do handler não roda e o
+    // botão ficaria travado em "Enviando..." para sempre.
+    setTimeout(entrega, 2500);
+
+    // Google Forms não devolve CORS. no-cors envia e não deixa ler a resposta,
+    // que é o comportamento esperado aqui.
+    try{
+      fetch(CONFIG.formAction, {
+        method:"POST", mode:"no-cors",
+        headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+        body: body.toString()
+      }).then(entrega, entrega);
+    }catch(err){
+      console.warn("[SEVET] fetch falhou de forma síncrona:", err && err.message);
+      entrega();
+    }
+  });
+
+  var entregue = false;
+  function entrega(){
+    if(entregue) return;
+    entregue = true;
+    liberado = true;                      // destranca a última tela
+    elAss.href = CONFIG.assistente;       // o link só existe depois do envio
+    btn.disabled = false;
+    btn.textContent = "Enviar e receber o assistente";
+    vai(TELA_OBRIGADO);
+  }
+
+  function val(id){ return (document.getElementById(id).value||"").trim(); }
+})();
+</script>
+</body>
+</html>
